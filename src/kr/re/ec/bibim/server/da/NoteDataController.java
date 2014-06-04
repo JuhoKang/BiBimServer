@@ -107,11 +107,11 @@ public class NoteDataController extends DataAccess{
 						+ " INTEGER NOT NULL, "
 						+ "FOREIGN KEY("
 						+ Constants.NoteConstantFrame.COLUMN_NAME_FOLDERID + ")"
-						+ "REFERENCES" + Constants.FolderConstantFrame.TABLE_NAME
+						+ "REFERENCES " + Constants.FolderConstantFrame.TABLE_NAME
 						+ "(" + Constants.FolderConstantFrame.COLUMN_NAME_FOLDERID + ")" 
 						+ "FOREIGN KEY("
 						+ Constants.NoteConstantFrame.COLUMN_NAME_USERID + ")"
-						+ "REFERENCES" + Constants.UserConstantFrame.TABLE_NAME
+						+ "REFERENCES " + Constants.UserConstantFrame.TABLE_NAME
 						+ "(" + Constants.UserConstantFrame.COLUMN_NAME_USERID + ")"
 						+ " );"; // should not be UNIQUE Deleted UNIQUE
 				// this query depends on SQLite
