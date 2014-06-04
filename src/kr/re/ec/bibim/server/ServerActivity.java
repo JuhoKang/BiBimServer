@@ -16,6 +16,18 @@ public class ServerActivity {
 		}
 		
 	}
+	public static void main(String[] args) {
+		try{
+		new ServerNetworkController().Start();
+	} catch (ClassNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+	}
 	
 	
 

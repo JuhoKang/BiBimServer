@@ -8,8 +8,7 @@ import kr.re.ec.bibim.vo.UserData;
 
 public class ServerUserAuthentication {
 
-	public static UserData checkLogin(String username, String userpwd)
-			throws Exception {
+	public static UserData checkLogin(String username, String userpwd){
 		ArrayList<UserData> userlist = new ArrayList<UserData>();
 		userlist = UserDataController.getInstance().findAll();
 		boolean isRegistered = false;
@@ -23,8 +22,12 @@ public class ServerUserAuthentication {
 			user = userlist.get(i);
 
 			
-				isRegistered = username.matches(user.getName());
-				LogUtil.v(""+username + "+and this+" + user.getName());	
+				isRegistered = username.equals(user.getName());
+				if (isRegistered == true){
+					break;
+				}
+				LogUtil.v(""+user.getName() + "+and this+" + username);
+				LogUtil.v("this is"+isRegistered);
 			
 
 		}
@@ -32,16 +35,23 @@ public class ServerUserAuthentication {
 		if (isRegistered == true) {
 
 			LogUtil.d("username is : " + username + " checking password...");
-			isAuthenticated = userpwd.matches(user.getPassword());
+			isAuthenticated = userpwd.equals(user.getPassword());
 
+		}
+		else {
+			user.setUserid(-1);
+			return user;
 		}
 
 		if (isAuthenticated == true) {
 			LogUtil.d("login success");
 			return user;
-		} else {
-			throw new Exception("can't login");
 		}
+		else {
+			user.setUserid(-1);
+			return user;
+		}
+		
 
 	}
 
