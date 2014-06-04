@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.lang.ClassNotFoundException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 
 import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
@@ -33,7 +34,7 @@ public class ServerNetworkController {
 	public void Start() throws IOException, ClassNotFoundException {
 
 		UserDataWrapper udw = new UserDataWrapper();
-		UserData loginuser = new UserData();
+		UserData user = new UserData();
 		// create the socket server object
 		server = new ServerSocket(Constants.NetworkConstantFrame.PORT);
 		// keep listens indefinitely until receives 'exit' call or program
@@ -63,24 +64,42 @@ public class ServerNetworkController {
 			LogUtil.d("udw is: " + udw.getUserid() + "\t" + udw.getName()
 					+ "\t" + udw.getPassword());
 
-			if (udw.getQueryHeader().matches("Login")) {
-				LogUtil.d("QueryHeader is Login");
-				loginuser = WrappedClassOpener.getInstance()
+			if (udw.getQueryHeader().matches(Constants.QueryHeaderConstantFrame.LOGIN)) {
+				LogUtil.d("QueryHeader is "+ Constants.QueryHeaderConstantFrame.LOGIN);
+				user = WrappedClassOpener.getInstance()
 						.OpenUserDataWrapper(udw);
-				LogUtil.d("openedclass: " + loginuser.getUserid() + "\t"
-						+ loginuser.getName() + "\t" + loginuser.getPassword());
+				LogUtil.d("openedclass: " + user.getUserid() + "\t"
+						+ user.getName() + "\t" + user.getPassword());
 
-				loginuser = ServerUserAuthentication.checkLogin(
-						loginuser.getName(), loginuser.getPassword());
+				user = ServerUserAuthentication.checkLogin(
+						user.getName(), user.getPassword());
 
+			}
+			else if(udw.getQueryHeader().matches(Constants.QueryHeaderConstantFrame.INSERT)) {
+				int check = 0;
+				LogUtil.d("QueryHeader is " + Constants.QueryHeaderConstantFrame.INSERT);
+				user = WrappedClassOpener.getInstance()
+						.OpenUserDataWrapper(udw);
+				LogUtil.d("openedclass: " + user.getUserid() + "\t"
+						+ user.getName() + "\t" + user.getPassword());
+
+				check = UserDataController.getInstance().insert(user);
+				
+				user = UserDataController.getInstance().findByName(user.getName());
+				LogUtil.d("User Added :"+ user.getUserid() + "\t" 
+						+ user.getName() + "\t" + user.getPassword());
+				if(check == 0){
+					LogUtil.d("Insert Error Telling Client");
+					user.setUserid(-1);
+				}
 			}
 
 			// create ObjectOutputStream object
 			ObjectOutputStream oos = new ObjectOutputStream(
 					socket.getOutputStream());
 			// write object to Socket
-			oos.writeObject(loginuser);
-			System.out.println("Message Sent: " + loginuser.getUserid());
+			oos.writeObject(user);
+			System.out.println("Message Sent: " + user.getUserid());
 			// close resources
 			ois.close();
 			oos.close();

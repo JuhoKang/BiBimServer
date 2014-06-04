@@ -178,6 +178,42 @@ public class UserDataController extends DataAccess{
 		return resultusers;
 	}
 	
+	public UserData findByName(String name) { 
+		UserData resultuser = new UserData();
+		
+		open();
+		Connection c = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = c.createStatement();
+			String query = "SELECT " 
+					+ Constants.UserConstantFrame.COLUMN_NAME_USERID + ", "
+					+ Constants.UserConstantFrame.COLUMN_NAME_USERNAME + ", "
+					+ Constants.UserConstantFrame.COLUMN_NAME_USERPWD 
+					+" FROM " + Constants.UserConstantFrame.TABLE_NAME
+					+" WHERE "+ Constants.UserConstantFrame.COLUMN_NAME_USERNAME + "=" +"'"+ name +"'"+ ";";
+			LogUtil.v("query: " + query);
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				resultuser.setUserid(rs.getInt(Constants.UserConstantFrame.COLUMN_NAME_USERID));
+				resultuser.setName(rs.getString(Constants.UserConstantFrame.COLUMN_NAME_USERNAME));
+				resultuser.setPassword(rs.getString(Constants.UserConstantFrame.COLUMN_NAME_USERPWD));
+				LogUtil.d("userdata :"+ resultuser.getUserid()+"\t"+resultuser.getName()+"\t"+resultuser.getPassword());
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		
+		return resultuser;
+	}
+	
 	public int insert(UserData userdata) { 
 		int result = 0;
 		
