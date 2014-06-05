@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import kr.re.ec.bibim.constants.Constants;
 import kr.re.ec.bibim.server.da.FolderDataController;
@@ -132,6 +133,20 @@ public class ServerNetworkController {
 			FolderDataController.getInstance().insert(folder);
 			folder = FolderDataController.getInstance().findByName(folder.getName());
 
+		} else if (fdw.getQueryHeader().matches(Constants.QueryHeaderConstantFrame.DELETE)) {
+			LogUtil.d("QueryHeader is "
+					+ Constants.QueryHeaderConstantFrame.DELETE);
+			folder = WrappedClassOpener.getInstance().OpenFolderDataWrapper(fdw);
+			
+			LogUtil.d("openedclass: " + folder.getFolderid() + "\t"
+					+ folder.getName() + "\t" + folder.getUserid());
+			
+			folder = FolderDataController.getInstance().findByName(folder.getName());
+			LogUtil.d("delete: " + folder.getFolderid() + "\t"
+					+ folder.getName() + "\t" + folder.getUserid());
+			FolderDataController.getInstance().deleteByID(folder.getFolderid());
+			LogUtil.d("deleted");
+			folder.setName("NULL");
 		}
 
 		// create ObjectOutputStream object
@@ -153,6 +168,8 @@ public class ServerNetworkController {
 	public void userStreamActivation() throws IOException,
 			ClassNotFoundException {
 
+		boolean isreturnuser = true;
+		
 		UserDataWrapper udw = new UserDataWrapper();
 		UserData user = new UserData();
 		// create the socket server object
@@ -209,18 +226,34 @@ public class ServerNetworkController {
 				LogUtil.d("Insert Error Telling Client");
 				user.setUserid(-1);
 			}
-		}
+		} else if (udw.getQueryHeader().matches(Constants.QueryHeaderConstantFrame.SELECT)) {
+			if(udw.getExpression().matches("all")){
+				ArrayList<FolderData> resultfolders = new ArrayList<FolderData>();
+				
+				resultfolders = FolderDataController.getInstance().findFolderListById(udw.getUserid());
 
-		// create ObjectOutputStream object
-		ObjectOutputStream oos = new ObjectOutputStream(
-				socket.getOutputStream());
-		// write object to Socket
-		oos.writeObject(user);
-		System.out.println("Message Sent: " + user.getUserid());
-		// close resources
+				ObjectOutputStream oos = new ObjectOutputStream(
+						socket.getOutputStream());
+				oos.writeObject(resultfolders);
+				System.out.println("Message Sent: " + "this is Selecting Folders");
+				isreturnuser = false;
+			}
+		}
+		
+		if(isreturnuser == true){
+			// create ObjectOutputStream object
+			ObjectOutputStream oos = new ObjectOutputStream(
+					socket.getOutputStream());
+			// write object to Socket
+			oos.writeObject(user);
+			System.out.println("Message Sent: " + user.getUserid());
+			// close resources
+			
+			oos.close();		
+		} else {
+		}
 		ois.close();
-		oos.close();
-		socket.close();
+		socket.close();	
 		// terminate the server if client sends exit request
 		// close the ServerSocket object
 		subserver.close();

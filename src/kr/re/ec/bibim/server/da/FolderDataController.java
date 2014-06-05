@@ -85,6 +85,8 @@ public class FolderDataController extends DataAccess {
 	 * 
 	 * @return success
 	 */
+	
+	//TODO delete UNIQUE in folder name, use folder name with selecting by id,and seperating by user id
 	public boolean createTable() {
 		open();
 		Connection c = getConnection();
@@ -195,6 +197,56 @@ public class FolderDataController extends DataAccess {
 
 		return resultfolders;
 	}
+	
+	// find
+		/**
+		 * find all directories.
+		 * 
+		 * @return ArrayList<Directory>
+		 */
+		public ArrayList<FolderData> findFolderListById(int id) {
+			ArrayList<FolderData> resultfolders = new ArrayList<FolderData>();
+
+			open();
+			Connection c = getConnection();
+			Statement stmt = null;
+			ResultSet rs = null;
+			try {
+				stmt = c.createStatement();
+				String query = "SELECT "
+						+ Constants.FolderConstantFrame.COLUMN_NAME_FOLDERID + ", "
+						+ Constants.FolderConstantFrame.COLUMN_NAME_FOLDERNAME
+						+ ", " + Constants.FolderConstantFrame.COLUMN_NAME_USERID
+						+ " FROM " + Constants.FolderConstantFrame.TABLE_NAME
+						+ " WHERE "+ Constants.FolderConstantFrame.COLUMN_NAME_USERID + "=" +"'"+ id +"'"+  ";";
+				LogUtil.v("query: " + query);
+				rs = stmt.executeQuery(query);
+
+				while (rs.next()) {
+					FolderData folderdata = new FolderData();
+					folderdata
+							.setFolderid(rs
+									.getInt(Constants.FolderConstantFrame.COLUMN_NAME_FOLDERID));
+					folderdata
+							.setName(rs
+									.getString(Constants.FolderConstantFrame.COLUMN_NAME_FOLDERNAME));
+					folderdata
+							.setUserid(rs
+									.getInt(Constants.FolderConstantFrame.COLUMN_NAME_USERID));
+					LogUtil.d("userdata :" + folderdata.getFolderid() + "\t"
+							+ folderdata.getName() + "\t" + folderdata.getUserid());
+					resultfolders.add(folderdata);
+				}
+				rs.close();
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				close();
+			}
+
+			return resultfolders;
+		}
 	
 	public FolderData findByName(String name) { 
 		FolderData resultfolder = new FolderData();
