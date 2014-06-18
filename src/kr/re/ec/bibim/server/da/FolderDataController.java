@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import kr.re.ec.bibim.constants.Constants;
 import kr.re.ec.bibim.util.LogUtil;
 import kr.re.ec.bibim.vo.FolderData;
-import kr.re.ec.bibim.vo.UserData;
 
 /**
  * DAO(Data Access Object) for controlling DB<br>
@@ -99,7 +98,7 @@ public class FolderDataController extends DataAccess {
 					+ Constants.FolderConstantFrame.COLUMN_NAME_FOLDERID
 					+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
 					+ Constants.FolderConstantFrame.COLUMN_NAME_FOLDERNAME
-					+ " TEXT NOT NULL UNIQUE, "
+					+ " TEXT NOT NULL , "
 					+ Constants.FolderConstantFrame.COLUMN_NAME_USERID
 					+ " INTEGER NOT NULL, " + "FOREIGN KEY("
 					+ Constants.FolderConstantFrame.COLUMN_NAME_USERID + ")"
@@ -263,6 +262,43 @@ public class FolderDataController extends DataAccess {
 					+ Constants.FolderConstantFrame.COLUMN_NAME_USERID 
 					+" FROM " + Constants.FolderConstantFrame.TABLE_NAME
 					+" WHERE "+ Constants.FolderConstantFrame.COLUMN_NAME_FOLDERNAME + "=" +"'"+ name +"'"+ ";";
+			LogUtil.v("query: " + query);
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next()) {
+				resultfolder.setFolderid(rs.getInt(Constants.FolderConstantFrame.COLUMN_NAME_FOLDERID));
+				resultfolder.setUserid(rs.getInt(Constants.FolderConstantFrame.COLUMN_NAME_FOLDERNAME));
+				resultfolder.setName(rs.getString(Constants.FolderConstantFrame.COLUMN_NAME_USERID));
+				
+				LogUtil.d("userdata :"+ resultfolder.getFolderid()+"\t"+resultfolder.getName()+"\t"+resultfolder.getUserid());
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		
+		return resultfolder;
+	}
+	
+	public FolderData findById(int id) { 
+		FolderData resultfolder = new FolderData();
+		
+		open();
+		Connection c = getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = c.createStatement();
+			String query = "SELECT " 
+					+ Constants.FolderConstantFrame.COLUMN_NAME_FOLDERID + ", "
+					+ Constants.FolderConstantFrame.COLUMN_NAME_FOLDERNAME + ", "
+					+ Constants.FolderConstantFrame.COLUMN_NAME_USERID 
+					+" FROM " + Constants.FolderConstantFrame.TABLE_NAME
+					+" WHERE "+ Constants.FolderConstantFrame.COLUMN_NAME_FOLDERID + "=" +"'"+ id +"'"+ ";";
 			LogUtil.v("query: " + query);
 			rs = stmt.executeQuery(query);
 			

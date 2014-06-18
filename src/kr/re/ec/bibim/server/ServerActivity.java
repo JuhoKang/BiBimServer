@@ -1,25 +1,10 @@
 package kr.re.ec.bibim.server;
 
-import java.io.IOException;
-
 import kr.re.ec.bibim.server.da.FolderDataController;
 import kr.re.ec.bibim.server.da.NoteDataController;
 import kr.re.ec.bibim.server.da.UserDataController;
 
 public class ServerActivity {
-
-	public void Start() {
-		try {
-			new ServerNetworkController().Start();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
 
 	public void initDB() {
 
@@ -41,17 +26,17 @@ public class ServerActivity {
 		// to initDB
 		// new ServerActivity().dropDB();
 		// new ServerActivity().initDB();
-		
-		try {
-			new ServerNetworkController().Start();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		/*
+		 * for(int i=0; i< 20; i++){ NoteData nd = new NoteData();
+		 * nd.setContent("wowowowowow"+i+i+i+i+
+		 * "wowowowowowadfasdfweqqqwowowowowowadfasdfweqqqwowowowowowadfasdfweqqq"
+		 * ); nd.setDate(null); if(i<10){ nd.setFolderid(4); } else{
+		 * nd.setFolderid(5); } nd.setUserid(1); nd.setTitle("note"+i);
+		 * 
+		 * NoteDataController.getInstance().insert(nd); }
+		 */
 
+		new ServerNetworkController().run();
 	}
 
 }
