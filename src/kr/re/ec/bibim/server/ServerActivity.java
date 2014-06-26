@@ -26,15 +26,6 @@ public class ServerActivity {
 		// to initDB
 		// new ServerActivity().dropDB();
 		// new ServerActivity().initDB();
-		/*
-		 * for(int i=0; i< 20; i++){ NoteData nd = new NoteData();
-		 * nd.setContent("wowowowowow"+i+i+i+i+
-		 * "wowowowowowadfasdfweqqqwowowowowowadfasdfweqqqwowowowowowadfasdfweqqq"
-		 * ); nd.setDate(null); if(i<10){ nd.setFolderid(4); } else{
-		 * nd.setFolderid(5); } nd.setUserid(1); nd.setTitle("note"+i);
-		 * 
-		 * NoteDataController.getInstance().insert(nd); }
-		 */
 
 		new ServerNetworkController().run();
 	}
